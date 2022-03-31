@@ -1,37 +1,8 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useState } from "react";
 import PostItem from "./components/post-item";
-
-const GET_POSTS_QUERY = gql`
-  query getPosts {
-    getPosts {
-      id
-      title
-      description
-    }
-  }
-`;
-
-const CREATE_POST_QUERY = gql`
-  mutation CreatePost($title: String!, $description: String!) {
-    createPost(title: $title, description: $description)
-  }
-`;
-
-interface IPost {
-  id: string;
-  title: string;
-  description: string;
-}
-
-interface IGetPosts {
-  getPosts: IPost[];
-}
-
-interface ICreatePost {
-  title: string;
-  description: string;
-}
+import { CREATE_POST_QUERY, GET_POSTS_QUERY } from "./gql/post";
+import { ICreatePost, IGetPosts } from "./interfaces/post";
 
 function App() {
   const postsData = useQuery<IGetPosts>(GET_POSTS_QUERY);
