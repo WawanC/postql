@@ -1,4 +1,29 @@
+import { gql, useQuery } from "@apollo/client";
+import PostItem from "./components/post-item";
+
+const GET_POSTS_QUERY = gql`
+  query getPosts {
+    getPosts {
+      id
+      title
+      description
+    }
+  }
+`;
+
+interface IPost {
+  id: string;
+  title: string;
+  description: string;
+}
+
+interface IGetPosts {
+  getPosts: IPost[];
+}
+
 function App() {
+  const PostsData = useQuery<IGetPosts>(GET_POSTS_QUERY);
+
   return (
     <main className="flex flex-col items-center p-4 gap-4">
       <section className=" w-fit text-center p-2">
@@ -35,8 +60,21 @@ function App() {
         </button>
       </form>
 
-      <section>
-        <h1 className="underline">Posts List</h1>
+      <section className="flex flex-col gap-2 items-center">
+        <h1 className="text-xl underline">Posts List</h1>
+        <div>
+          {PostsData.loading
+            ? "Loading..."
+            : PostsData.data
+            ? PostsData.data.getPosts.map((post) => (
+                <PostItem
+                  key={post.id}
+                  title={post.title}
+                  description={post.description}
+                />
+              ))
+            : "Error Occurred"}
+        </div>
       </section>
     </main>
   );
