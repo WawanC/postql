@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { useState } from "react";
 import PostItem from "./components/post-item";
 
 const GET_POSTS_QUERY = gql`
@@ -8,6 +9,12 @@ const GET_POSTS_QUERY = gql`
       title
       description
     }
+  }
+`;
+
+const CREATE_POST_QUERY = gql`
+  mutation CreatePost($title: String!, $description: String!) {
+    createPost(title: $title, description: $description)
   }
 `;
 
@@ -21,8 +28,31 @@ interface IGetPosts {
   getPosts: IPost[];
 }
 
+interface ICreatePost {
+  title: string;
+  description: string;
+}
+
 function App() {
-  const PostsData = useQuery<IGetPosts>(GET_POSTS_QUERY);
+  const postsData = useQuery<IGetPosts>(GET_POSTS_QUERY);
+  const [createPostFn, _] = useMutation<any, ICreatePost>(CREATE_POST_QUERY);
+
+  const [enteredTitle, setEnteredTitle] = useState<string>("");
+  const [enteredDesc, setEnteredDesc] = useState<string>("");
+
+  const createPostHandler: React.FormEventHandler<HTMLFormElement> = async (
+    event
+  ) => {
+    event.preventDefault();
+
+    const result = await createPostFn({
+      variables: { title: enteredTitle, description: enteredDesc },
+    });
+    console.log(result.data);
+
+    setEnteredTitle("");
+    setEnteredDesc("");
+  };
 
   return (
     <main className="flex flex-col items-center p-4 gap-4">
@@ -31,10 +61,12 @@ function App() {
         <h2 className="italic font-light">Post CRUD, but with GraphQL</h2>
       </section>
 
-      <form className="flex flex-col gap-1">
+      <form className="flex flex-col gap-1" onSubmit={createPostHandler}>
         <div className="flex flex-col">
           <label htmlFor="title">Title :</label>
           <input
+            value={enteredTitle}
+            onChange={(event) => setEnteredTitle(event.target.value)}
             type="text"
             id="title"
             className="border border-black p-1"
@@ -44,6 +76,8 @@ function App() {
         <div className="flex flex-col">
           <label htmlFor="description">Description :</label>
           <textarea
+            value={enteredDesc}
+            onChange={(event) => setEnteredDesc(event.target.value)}
             id="description"
             cols={30}
             rows={2}
@@ -62,11 +96,11 @@ function App() {
 
       <section className="flex flex-col gap-2 items-center">
         <h1 className="text-xl underline">Posts List</h1>
-        <div>
-          {PostsData.loading
+        <div className="flex flex-col gap-2">
+          {postsData.loading
             ? "Loading..."
-            : PostsData.data
-            ? PostsData.data.getPosts.map((post) => (
+            : postsData.data
+            ? postsData.data.getPosts.map((post) => (
                 <PostItem
                   key={post.id}
                   title={post.title}
