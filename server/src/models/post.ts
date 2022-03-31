@@ -1,4 +1,5 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { ArgsType, Field, ID, ObjectType } from "type-graphql";
+import { IsNotEmpty } from "class-validator";
 
 @ObjectType()
 export class Post {
@@ -16,4 +17,22 @@ export class Post {
 
   @Field(() => String)
   description!: string;
+}
+
+@ArgsType()
+export class CreatePostArgs {
+  @Field(() => String)
+  @IsNotEmpty()
+  title!: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  description!: string;
+}
+
+@ArgsType()
+export class UpdatePostArgs extends CreatePostArgs {
+  @Field(() => String)
+  @IsNotEmpty()
+  id!: string;
 }

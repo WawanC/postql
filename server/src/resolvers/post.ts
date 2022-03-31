@@ -1,28 +1,5 @@
-import {
-  Arg,
-  Args,
-  ArgsType,
-  Field,
-  Mutation,
-  Query,
-  Resolver,
-} from "type-graphql";
-import { Post } from "../models/post";
-
-@ArgsType()
-class CreatePostArgs {
-  @Field(() => String)
-  title!: string;
-
-  @Field(() => String)
-  description!: string;
-}
-
-@ArgsType()
-class UpdatePostArgs extends CreatePostArgs {
-  @Field(() => String)
-  id!: string;
-}
+import { Arg, Args, Mutation, Query, Resolver } from "type-graphql";
+import { CreatePostArgs, Post, UpdatePostArgs } from "../models/post";
 
 @Resolver()
 export class PostResolver {
