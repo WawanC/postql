@@ -15,3 +15,13 @@ export const CREATE_POST_QUERY = gql`
     createPost(title: $title, description: $description)
   }
 `;
+
+export const NEW_POST_SUBSCRIPTION_QUERY = gql`
+  subscription Subscription {
+    newPostSubscription {
+      id
+      title
+      description
+    }
+  }
+`;

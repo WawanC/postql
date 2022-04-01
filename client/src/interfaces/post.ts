@@ -12,3 +12,7 @@ export interface ICreatePost {
   title: string;
   description: string;
 }
+
+export interface INewPostSubscriptionData {
+  newPostSubscription: IPost;
+}
