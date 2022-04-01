@@ -1,4 +1,14 @@
-import { Arg, Args, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Args,
+  Mutation,
+  PubSub,
+  PubSubEngine,
+  Query,
+  Resolver,
+  Root,
+  Subscription,
+} from "type-graphql";
 import { CreatePostArgs, Post, UpdatePostArgs } from "../models/post";
 
 @Resolver()
@@ -11,11 +21,13 @@ export class PostResolver {
   }
 
   @Mutation(() => String)
-  createPost(
-    @Args(() => CreatePostArgs) { title, description }: CreatePostArgs
+  async createPost(
+    @Args(() => CreatePostArgs) { title, description }: CreatePostArgs,
+    @PubSub() pubSub: PubSubEngine
   ) {
     const newPost = new Post(title, description);
     this.posts.push(newPost);
+    await pubSub.publish("NEW_POST", newPost);
     return "Create Post Success";
   }
 
@@ -40,5 +52,12 @@ export class PostResolver {
     }
     this.posts.splice(postIdx, 1);
     return "Delete Post Success";
+  }
+
+  @Subscription({
+    topics: "NEW_POST",
+  })
+  newPostSubscription(@Root() payload: Post): Post {
+    return payload;
   }
 }
