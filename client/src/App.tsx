@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useSubscription } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { useEffect, useRef, useState } from "react";
 import PostItem from "./components/post-item";
 import {
   CREATE_POST_QUERY,
@@ -21,6 +21,8 @@ function App() {
 
   const [enteredTitle, setEnteredTitle] = useState<string>("");
   const [enteredDesc, setEnteredDesc] = useState<string>("");
+  const [enteredImage, setEnteredImage] = useState<File | null>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     postsData.subscribeToMore<INewPostSubscriptionData>({
@@ -41,12 +43,19 @@ function App() {
     event.preventDefault();
 
     const result = await createPostFn({
-      variables: { title: enteredTitle, description: enteredDesc },
+      variables: {
+        title: enteredTitle,
+        description: enteredDesc,
+        image: enteredImage,
+      },
     });
     console.log(result.data);
 
     setEnteredTitle("");
     setEnteredDesc("");
+    if (imageRef.current?.value) {
+      imageRef.current.value = "";
+    }
   };
 
   return (
@@ -58,13 +67,17 @@ function App() {
 
       <form className="flex flex-col gap-1" onSubmit={createPostHandler}>
         {createPostData.loading && (
-          <h1 className="text-blue-500">Please wait...</h1>
+          <h1 className="text-blue-500 text-center">Please wait...</h1>
         )}
         {createPostData.error && (
-          <h1 className="text-red-500">An error occurred when creating post</h1>
+          <h1 className="text-red-500 text-center">
+            An error occurred when creating post
+          </h1>
         )}
         {createPostData.data && (
-          <h1 className="text-green-500">Post successfully created</h1>
+          <h1 className="text-green-500 text-center">
+            Post successfully created
+          </h1>
         )}
         <div className="flex flex-col">
           <label htmlFor="title">Title :</label>
@@ -88,6 +101,19 @@ function App() {
             className="border border-black p-1"
             required
             maxLength={56}
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="image">Image :</label>
+          <input
+            type="file"
+            name="image"
+            id="image"
+            onChange={(event) => {
+              if (!event.target.files) return;
+              setEnteredImage(event.target.files[0]);
+            }}
+            ref={imageRef}
           />
         </div>
         <button

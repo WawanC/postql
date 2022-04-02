@@ -11,6 +11,7 @@ export interface IGetPosts {
 export interface ICreatePost {
   title: string;
   description: string;
+  image?: File | null;
 }
 
 export interface INewPostSubscriptionData {

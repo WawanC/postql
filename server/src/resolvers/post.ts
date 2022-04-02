@@ -10,6 +10,8 @@ import {
   Subscription,
 } from "type-graphql";
 import { CreatePostArgs, Post, UpdatePostArgs } from "../models/post";
+import fs from "fs";
+import path from "path";
 
 @Resolver()
 export class PostResolver {
@@ -22,10 +24,27 @@ export class PostResolver {
 
   @Mutation(() => String)
   async createPost(
-    @Args(() => CreatePostArgs) { title, description }: CreatePostArgs,
+    @Args(() => CreatePostArgs) { title, description, image }: CreatePostArgs,
     @PubSub() pubSub: PubSubEngine
   ) {
     const newPost = new Post(title, description);
+    
+    if (image) {
+      const imageData = await image;
+      const imageExtension = imageData.filename.split(".")[1];
+      const imageName = `${newPost.id}.${imageExtension}`;
+
+      const imagePath = path.join(__dirname, "..", "..", "public", imageName);
+
+      imageData
+        .createReadStream()
+        .pipe(fs.createWriteStream(imagePath))
+        .on("finish", () => console.log("Finish"))
+        .on("error", () => console.log("error"));
+
+      newPost.image = imageName;
+    }
+
     this.posts.push(newPost);
     await pubSub.publish("NEW_POST", newPost);
     return "Create Post Success";

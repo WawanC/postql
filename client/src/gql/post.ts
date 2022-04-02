@@ -11,8 +11,8 @@ export const GET_POSTS_QUERY = gql`
 `;
 
 export const CREATE_POST_QUERY = gql`
-  mutation CreatePost($title: String!, $description: String!) {
-    createPost(title: $title, description: $description)
+  mutation CreatePost($title: String!, $description: String!, $image: Upload) {
+    createPost(title: $title, description: $description, image: $image)
   }
 `;
 
