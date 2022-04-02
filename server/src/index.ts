@@ -8,6 +8,7 @@ import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import { graphqlUploadExpress } from "graphql-upload";
+import path from "path";
 
 const main = async () => {
   const app = express();
@@ -36,6 +37,7 @@ const main = async () => {
     ],
   });
 
+  app.use(express.static(path.join(__dirname, "..", "public")));
   app.use(graphqlUploadExpress());
 
   await apolloServer.start();

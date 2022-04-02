@@ -60,6 +60,7 @@ function App() {
 
   return (
     <main className="flex flex-col items-center p-4 gap-4">
+      {console.log(postsData.data)}
       <section className=" w-fit text-center p-2">
         <h1 className="text-xl font-bold">PostQL</h1>
         <h2 className="italic font-light">Post CRUD, but with GraphQL</h2>
@@ -136,6 +137,7 @@ function App() {
               postsData.data.getPosts.map((post) => (
                 <PostItem
                   key={post.id}
+                  image={post.image}
                   title={post.title}
                   description={post.description}
                 />

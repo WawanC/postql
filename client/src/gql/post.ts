@@ -6,6 +6,7 @@ export const GET_POSTS_QUERY = gql`
       id
       title
       description
+      image
     }
   }
 `;
