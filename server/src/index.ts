@@ -52,8 +52,8 @@ const main = async () => {
     },
   });
 
-  httpServer.listen(8000, () => {
-    console.log("Server listening on 8000...");
+  httpServer.listen(process.env.PORT || 8000, () => {
+    console.log(`Server listening on ${process.env.PORT || 8000}`);
   });
 };
 
