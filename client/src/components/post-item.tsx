@@ -6,7 +6,7 @@ interface IPostItem {
 
 const PostItem: React.FC<IPostItem> = (props) => {
   return (
-    <div className="border border-black">
+    <div className="border border-black text-left">
       <div className="p-2">
         <h1 className="font-bold">{props.title}</h1>
         <p>{props.description}</p>

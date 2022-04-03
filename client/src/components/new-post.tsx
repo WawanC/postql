@@ -14,12 +14,18 @@ const NewPost: React.FC<INewPost> = (props) => {
   const [enteredDesc, setEnteredDesc] = useState<string>("");
   const [enteredImage, setEnteredImage] = useState<File | null>(null);
   const imageRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const createPostHandler: React.FormEventHandler<HTMLFormElement> = async (
     event
   ) => {
     event.preventDefault();
     event.stopPropagation();
+
+    if (enteredImage && enteredImage.size > 1024 * 1000) {
+      setError("Image size cannot be larger than 1 MB");
+      return;
+    }
 
     props.onCreatePost(enteredTitle, enteredDesc, enteredImage);
 
@@ -41,7 +47,8 @@ const NewPost: React.FC<INewPost> = (props) => {
         }}
       />
       <section className="bg-white p-4 w-full md:w-auto">
-        <h1 className="text-xl font-bold text-center">Create New Post</h1>
+        <h1 className="text-2xl font-bold text-center">Create New Post</h1>
+        {error && <h2 className="text-red-500 text-center">{error}</h2>}
         <form
           className="flex flex-col gap-2 w-full"
           onSubmit={createPostHandler}
@@ -88,6 +95,7 @@ const NewPost: React.FC<INewPost> = (props) => {
                 setEnteredImage(event.target.files[0]);
               }}
               ref={imageRef}
+              accept={".png, .jpg, .jpeg"}
             />
           </div>
           <button

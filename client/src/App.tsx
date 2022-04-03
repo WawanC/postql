@@ -64,7 +64,9 @@ function App() {
       >
         <section className="text-center p-2">
           <h1 className="text-xl font-bold">PostQL</h1>
-          <h2 className="italic font-light">Post CRUD, but with GraphQL</h2>
+          <h2 className="italic font-light">
+            Share your post, but with GraphQL
+          </h2>
         </section>
 
         {createPostData.loading && (
