@@ -9,8 +9,11 @@ import { useServer } from "graphql-ws/lib/use/ws";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import { graphqlUploadExpress } from "graphql-upload";
 import path from "path";
+import { clearImages } from "./utils/clearImages";
 
 const main = async () => {
+  clearImages();
+
   const app = express();
   const httpServer = createServer(app);
   const schema = await buildSchema({ resolvers: [PostResolver] });

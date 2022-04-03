@@ -19,7 +19,7 @@ export class PostResolver {
 
   @Query(() => [Post])
   getPosts() {
-    return this.posts;
+    return this.posts.reverse();
   }
 
   @Mutation(() => String)
@@ -28,7 +28,7 @@ export class PostResolver {
     @PubSub() pubSub: PubSubEngine
   ) {
     const newPost = new Post(title, description);
-    
+
     if (image) {
       const imageData = await image;
       const imageExtension = imageData.filename.split(".")[1];
