@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface INewPost {
   closeModal: () => void;
@@ -15,6 +15,7 @@ const NewPost: React.FC<INewPost> = (props) => {
   const [enteredImage, setEnteredImage] = useState<File | null>(null);
   const imageRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [start, setStart] = useState<boolean>(false);
 
   const createPostHandler: React.FormEventHandler<HTMLFormElement> = async (
     event
@@ -37,16 +38,30 @@ const NewPost: React.FC<INewPost> = (props) => {
     props.closeModal();
   };
 
+  useEffect(() => {
+    setStart(true);
+  }, []);
+
   return (
-    <main className="absolute w-full h-full flex justify-center items-end md:items-center z-10">
+    <main className="absolute w-full h-full flex justify-center items-end md:items-center z-10 overflow-hidden">
       <div
-        className="absolute w-full h-full bg-black -z-10 opacity-50"
+        className={`absolute w-full h-full bg-black -z-10 ${
+          !start && "transition-all opacity-0"
+        } ${start && "transition-all opacity-50"}`}
         onClick={(event) => {
           event.stopPropagation();
-          props.closeModal();
+          setStart(false);
+          const x = setTimeout(() => {
+            props.closeModal();
+            clearTimeout(x);
+          }, 150);
         }}
       />
-      <section className="bg-white p-4 w-full md:w-auto">
+      <section
+        className={`bg-white p-4 w-full md:w-auto ${
+          !start && "transition-all translate-y-full opacity-0"
+        } ${start && "transition-all -translate-y-0 opacity-100"}`}
+      >
         <h1 className="text-2xl font-bold text-center">Create New Post</h1>
         {error && <h2 className="text-red-500 text-center">{error}</h2>}
         <form

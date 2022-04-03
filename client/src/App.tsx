@@ -40,13 +40,16 @@ function App() {
     description: string,
     image: File | null
   ) => {
-    await createPostFn({
+    const result = await createPostFn({
       variables: {
         title: title,
         description: description,
         image: image,
       },
     });
+    if (result.data) {
+      createPostData.loading = false;
+    }
   };
 
   return (
@@ -58,7 +61,7 @@ function App() {
         />
       )}
       <main
-        className={`flex flex-col items-center p-4 gap-4 w-full sm:w-1/2 lg:w-1/3 ${
+        className={`flex flex-col items-center py-4 md:px-4 gap-4 w-full sm:w-1/2 lg:w-1/3 ${
           isCreatePost && "overflow-hidden h-screen"
         }`}
       >
@@ -69,17 +72,17 @@ function App() {
           </h2>
         </section>
 
-        {createPostData.loading ? (
-          <h1 className="text-blue-500 text-center">Please wait...</h1>
+        {createPostData.data ? (
+          <h1 className="text-green-500 text-center">
+            Post successfully created
+          </h1>
         ) : createPostData.error ? (
           <h1 className="text-red-500 text-center">
             An error occurred when creating post
           </h1>
         ) : (
-          createPostData.data && (
-            <h1 className="text-green-500 text-center">
-              Post successfully created
-            </h1>
+          createPostData.loading && (
+            <h1 className="text-blue-500 text-center">Please wait...</h1>
           )
         )}
 
