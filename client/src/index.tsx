@@ -23,7 +23,7 @@ const uploadLink = createUploadLink({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://postql-wawan.herokuapp.com/subscriptions",
+    url: "wss://postql-wawan.herokuapp.com/subscriptions",
   })
 );
 
