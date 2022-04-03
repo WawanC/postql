@@ -23,6 +23,7 @@ export const NEW_POST_SUBSCRIPTION_QUERY = gql`
       id
       title
       description
+      image
     }
   }
 `;

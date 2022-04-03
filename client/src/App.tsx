@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
+import NewPost from "./components/new-post";
 import PostItem from "./components/post-item";
 import {
   CREATE_POST_QUERY,
@@ -23,6 +24,8 @@ function App() {
   const [enteredDesc, setEnteredDesc] = useState<string>("");
   const [enteredImage, setEnteredImage] = useState<File | null>(null);
   const imageRef = useRef<HTMLInputElement>(null);
+
+  const [isCreatePost, setIsCreatePost] = useState<boolean>(false);
 
   useEffect(() => {
     postsData.subscribeToMore<INewPostSubscriptionData>({
@@ -59,14 +62,19 @@ function App() {
   };
 
   return (
-    <main className="flex flex-col items-center p-4 gap-4">
-      {console.log(postsData.data)}
-      <section className=" w-fit text-center p-2">
-        <h1 className="text-xl font-bold">PostQL</h1>
-        <h2 className="italic font-light">Post CRUD, but with GraphQL</h2>
-      </section>
+    <>
+      {isCreatePost && <NewPost closeModal={() => setIsCreatePost(false)} />}
+      <main
+        className={`flex flex-col items-center p-4 gap-4 bg-red-100 w-full sm:w-1/2 lg:w-1/3 ${
+          isCreatePost && "overflow-hidden h-screen"
+        }`}
+      >
+        <section className="text-center p-2">
+          <h1 className="text-xl font-bold">PostQL</h1>
+          <h2 className="italic font-light">Post CRUD, but with GraphQL</h2>
+        </section>
 
-      <form className="flex flex-col gap-1" onSubmit={createPostHandler}>
+        {/* <form className="flex flex-col gap-1 w-full" onSubmit={createPostHandler}>
         {createPostData.loading && (
           <h1 className="text-blue-500 text-center">Please wait...</h1>
         )}
@@ -81,7 +89,9 @@ function App() {
           </h1>
         )}
         <div className="flex flex-col">
-          <label htmlFor="title">Title :</label>
+          <label htmlFor="title" className="font-bold">
+            Title :
+          </label>
           <input
             value={enteredTitle}
             onChange={(event) => setEnteredTitle(event.target.value)}
@@ -92,7 +102,9 @@ function App() {
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="description">Description :</label>
+          <label htmlFor="description" className="font-bold">
+            Description :
+          </label>
           <textarea
             value={enteredDesc}
             onChange={(event) => setEnteredDesc(event.target.value)}
@@ -105,7 +117,9 @@ function App() {
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="image">Image :</label>
+          <label htmlFor="image" className="font-bold">
+            Image :
+          </label>
           <input
             type="file"
             name="image"
@@ -119,36 +133,44 @@ function App() {
         </div>
         <button
           type="submit"
-          className="bg-gray-200 p-1 border border-black w-fit"
+          className="bg-gray-200 p-1 border border-black w-fit self-center"
         >
           Create Post
         </button>
-      </form>
+      </form> */}
 
-      <section className="flex flex-col gap-2 items-center">
-        <h1 className="text-xl underline">Posts List</h1>
-        <div className="flex flex-col gap-2">
-          {postsData.loading ? (
-            "Loading..."
-          ) : postsData.data ? (
-            postsData.data.getPosts.length === 0 ? (
-              "No posts yet."
+        <button
+          className="bg-gray-200 p-2 border border-black"
+          onClick={() => setIsCreatePost((value) => !value)}
+        >
+          Create New Post
+        </button>
+
+        <section className="flex flex-col gap-2 items-center w-full bg-green-100">
+          <h1 className="text-xl underline">Posts List</h1>
+          <div className="flex flex-col gap-2 w-full">
+            {postsData.loading ? (
+              "Loading..."
+            ) : postsData.data ? (
+              postsData.data.getPosts.length === 0 ? (
+                "No posts yet."
+              ) : (
+                postsData.data.getPosts.map((post) => (
+                  <PostItem
+                    key={post.id}
+                    image={post.image}
+                    title={post.title}
+                    description={post.description}
+                  />
+                ))
+              )
             ) : (
-              postsData.data.getPosts.map((post) => (
-                <PostItem
-                  key={post.id}
-                  image={post.image}
-                  title={post.title}
-                  description={post.description}
-                />
-              ))
-            )
-          ) : (
-            <p className="text-red-500">An error occurred</p>
-          )}
-        </div>
-      </section>
-    </main>
+              <p className="text-red-500">An error occurred</p>
+            )}
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
 

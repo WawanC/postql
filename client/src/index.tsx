@@ -13,6 +13,7 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createUploadLink } from "apollo-upload-client";
+import NewPost from "./components/new-post";
 
 // const httpLink = new HttpLink({
 //   uri: "http://localhost:8000/graphql",
