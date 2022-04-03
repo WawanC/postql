@@ -44,7 +44,13 @@ const main = async () => {
   app.use(graphqlUploadExpress());
 
   await apolloServer.start();
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({
+    app,
+    cors: {
+      origin: "*",
+      credentials: true,
+    },
+  });
 
   httpServer.listen(8000, () => {
     console.log("Server listening on 8000...");
