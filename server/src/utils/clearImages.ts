@@ -4,6 +4,12 @@ import path from "path";
 export const clearImages = () => {
   const directory = path.join(__dirname, "..", "..", "public");
 
+  const isDirExists = fs.existsSync(directory);
+  if (!isDirExists) {
+    fs.mkdirSync(directory);
+    return;
+  }
+
   fs.readdir(directory, (err, files) => {
     if (err) throw err;
 
