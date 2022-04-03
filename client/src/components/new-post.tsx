@@ -1,17 +1,15 @@
-import { useMutation } from "@apollo/client";
 import { useRef, useState } from "react";
-import { CREATE_POST_QUERY } from "../gql/post";
-import { ICreatePost } from "../interfaces/post";
 
 interface INewPost {
   closeModal: () => void;
+  onCreatePost: (
+    title: string,
+    description: string,
+    image: File | null
+  ) => Promise<any>;
 }
 
 const NewPost: React.FC<INewPost> = (props) => {
-  const [createPostFn, createPostData] = useMutation<any, ICreatePost>(
-    CREATE_POST_QUERY
-  );
-
   const [enteredTitle, setEnteredTitle] = useState<string>("");
   const [enteredDesc, setEnteredDesc] = useState<string>("");
   const [enteredImage, setEnteredImage] = useState<File | null>(null);
@@ -21,15 +19,9 @@ const NewPost: React.FC<INewPost> = (props) => {
     event
   ) => {
     event.preventDefault();
+    event.stopPropagation();
 
-    const result = await createPostFn({
-      variables: {
-        title: enteredTitle,
-        description: enteredDesc,
-        image: enteredImage,
-      },
-    });
-    console.log(result.data);
+    props.onCreatePost(enteredTitle, enteredDesc, enteredImage);
 
     setEnteredTitle("");
     setEnteredDesc("");
@@ -54,19 +46,6 @@ const NewPost: React.FC<INewPost> = (props) => {
           className="flex flex-col gap-2 w-full"
           onSubmit={createPostHandler}
         >
-          {createPostData.loading && (
-            <h1 className="text-blue-500 text-center">Please wait...</h1>
-          )}
-          {createPostData.error && (
-            <h1 className="text-red-500 text-center">
-              An error occurred when creating post
-            </h1>
-          )}
-          {createPostData.data && (
-            <h1 className="text-green-500 text-center">
-              Post successfully created
-            </h1>
-          )}
           <div className="flex flex-col">
             <label htmlFor="title" className="font-bold">
               Title :

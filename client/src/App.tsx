@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import NewPost from "./components/new-post";
 import PostItem from "./components/post-item";
 import {
@@ -20,11 +20,6 @@ function App() {
     CREATE_POST_QUERY
   );
 
-  const [enteredTitle, setEnteredTitle] = useState<string>("");
-  const [enteredDesc, setEnteredDesc] = useState<string>("");
-  const [enteredImage, setEnteredImage] = useState<File | null>(null);
-  const imageRef = useRef<HTMLInputElement>(null);
-
   const [isCreatePost, setIsCreatePost] = useState<boolean>(false);
 
   useEffect(() => {
@@ -40,30 +35,28 @@ function App() {
     });
   }, []);
 
-  const createPostHandler: React.FormEventHandler<HTMLFormElement> = async (
-    event
+  const createPostHandler = async (
+    title: string,
+    description: string,
+    image: File | null
   ) => {
-    event.preventDefault();
-
-    const result = await createPostFn({
+    await createPostFn({
       variables: {
-        title: enteredTitle,
-        description: enteredDesc,
-        image: enteredImage,
+        title: title,
+        description: description,
+        image: image,
       },
     });
-    console.log(result.data);
-
-    setEnteredTitle("");
-    setEnteredDesc("");
-    if (imageRef.current?.value) {
-      imageRef.current.value = "";
-    }
   };
 
   return (
     <>
-      {isCreatePost && <NewPost closeModal={() => setIsCreatePost(false)} />}
+      {isCreatePost && (
+        <NewPost
+          onCreatePost={createPostHandler}
+          closeModal={() => setIsCreatePost(false)}
+        />
+      )}
       <main
         className={`flex flex-col items-center p-4 gap-4 bg-red-100 w-full sm:w-1/2 lg:w-1/3 ${
           isCreatePost && "overflow-hidden h-screen"
@@ -74,7 +67,6 @@ function App() {
           <h2 className="italic font-light">Post CRUD, but with GraphQL</h2>
         </section>
 
-        {/* <form className="flex flex-col gap-1 w-full" onSubmit={createPostHandler}>
         {createPostData.loading && (
           <h1 className="text-blue-500 text-center">Please wait...</h1>
         )}
@@ -88,56 +80,6 @@ function App() {
             Post successfully created
           </h1>
         )}
-        <div className="flex flex-col">
-          <label htmlFor="title" className="font-bold">
-            Title :
-          </label>
-          <input
-            value={enteredTitle}
-            onChange={(event) => setEnteredTitle(event.target.value)}
-            type="text"
-            id="title"
-            className="border border-black p-1"
-            required
-          />
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="description" className="font-bold">
-            Description :
-          </label>
-          <textarea
-            value={enteredDesc}
-            onChange={(event) => setEnteredDesc(event.target.value)}
-            id="description"
-            cols={30}
-            rows={2}
-            className="border border-black p-1"
-            required
-            maxLength={56}
-          />
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="image" className="font-bold">
-            Image :
-          </label>
-          <input
-            type="file"
-            name="image"
-            id="image"
-            onChange={(event) => {
-              if (!event.target.files) return;
-              setEnteredImage(event.target.files[0]);
-            }}
-            ref={imageRef}
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-gray-200 p-1 border border-black w-fit self-center"
-        >
-          Create Post
-        </button>
-      </form> */}
 
         <button
           className="bg-gray-200 p-2 border border-black"
@@ -148,7 +90,7 @@ function App() {
 
         <section className="flex flex-col gap-2 items-center w-full bg-green-100">
           <h1 className="text-xl underline">Posts List</h1>
-          <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-col gap-2 w-full text-center">
             {postsData.loading ? (
               "Loading..."
             ) : postsData.data ? (
