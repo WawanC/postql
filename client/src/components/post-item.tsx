@@ -12,9 +12,9 @@ const PostItem: React.FC<IPostItem> = (props) => {
         <p>{props.description}</p>
       </div>
       {props.image && (
-        <div className="w-full bg-red-100">
+        <div className="w-full">
           <img
-            src={`http://localhost:8000/${props.image}`}
+            src={`https://postql-wawan.herokuapp.com/${props.image}`}
             className="w-full h-auto"
           />
         </div>
